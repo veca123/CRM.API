@@ -35,7 +35,6 @@ function cadastroEndereco(req, res) {
 }
 
 function alteracaoEndereco(req, res) {
-    let sql = 
     res.status(200).json({msg:'Alteração do endereço'})
 }
 
