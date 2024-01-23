@@ -35,15 +35,32 @@ function cadastroEndereco(req, res) {
 }
 
 function alteracaoEndereco(req, res) {
-    let sql = 
-    res.status(200).json({msg:'Alteração do endereço'})
+    let sql = 'UPDATE "cadClienteEndereco" SET "cdCliente"= $1, "rfCep"= $2, "dsEndereco"=$3, "dsBairro"=$4, "rfNumero"=$5, "cdCidade"= $6, "dsReferencia"=$7,"idTipo"=$8 WHERE "cdClienteEndereco" = $9 RETURNING *'
+    let val = [
+        req.body.cdCliente,
+        req.body.rfCep,
+        req.body.dsEndereco,
+        req.body.dsBairro,
+        req.body.rfNumero,
+        req.body.cdCidade,
+        req.body.dsReferencia,
+        req.body.idTipo,
+        req.query.cdClienteEndereco
+    ]
+    db.client.query(sql,val, function (erro, resultado) {
+        if(erro){
+            res.status(401).json(erro)
+            return
+        }
+        res.status(200).json({msg:'Alteração do endereço', dados: resultado.rows[0]})
+    })
 }
 
-function cancelarEndereco(req, res) { // esta dando undefined
+function cancelarEndereco(req, res) {
     let sql = 'UPDATE "cadClienteEndereco" SET "cdCancelado" = $1, "dtCancelado" = NOW() WHERE "cdClienteEndereco" = $2'
     let valor=[
         req.query.cdClienteEndereco,
-        req.query.cdCliente
+        req.query.idUser
     ]
     db.client.query(sql,valor, function (erro, resultado) {
         if(erro){

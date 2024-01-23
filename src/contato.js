@@ -34,16 +34,32 @@ function cadastroContato(req, res) {
 }
 
 function alteracaoContato(req, res) {
-    res.status(200).json({msg:'Alteração do contato'})
+    let sql = 'UPDATE "cadClienteContato" SET "dsContato"= $1, "cdCliente"= $2, "dsTelefone"=$3, "dsCelular"=$4, "dsEmail"=$5, "dtNascimento"= $6, "dsSite"=$7 WHERE "cdClienteContato" = $8 RETURNING *'
+    let val = [
+        req.body.dsContato,
+        req.body.cdCliente,
+        req.body.dsTelefone,
+        req.body.dsCelular,
+        req.body.dsEmail,
+        req.body.dtNascimento,
+        req.body.dsSite,
+        req.query.cdClienteContato
+    ]
+    db.client.query(sql,val, function (erro, resultado) {
+        if(erro){
+            res.status(401).json(erro)
+            return
+        }
+        res.status(200).json({msg:'Alteração do contato', dados: resultado.rows[0]})
+    })
 }
+   
 
     function cancelarContato(req, res) {
-        console.log("cdClienteContato:", req.query.cdClienteContato);
-        console.log("cdCliente:", req.query.cdCliente);
-        let sql = 'UPDATE "cadClienteContato" SET "cdCancelado"=$1, "dtCancelado"=NOW() WHERE "cdCliente"=$2';
+        let sql = 'UPDATE "cadClienteContato" SET "cdCancelado"=$1, "dtCancelado"=NOW() WHERE "cdClienteContato"=$2';
         let val = [
             req.query.cdClienteContato, 
-            req.query.cdCliente  
+            req.query.idUser  
         ];
     
         db.client.query(sql, val, function (erro, resultado) {
@@ -51,7 +67,7 @@ function alteracaoContato(req, res) {
                 res.status(401).json(erro);
                 return;
             }
-            res.status(200).json({ msg: 'Contato ' + req.query.cdCliente + ' Cancelado com Sucesso' });
+            res.status(200).json({ msg: 'Contato ' + req.query.cdClienteContato + ' Cancelado com Sucesso' });
         });
     }
     

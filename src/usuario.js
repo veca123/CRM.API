@@ -30,11 +30,35 @@ function cadastroUsuario(req, res) {
 }
 
 function alteracaoUsuario(req, res) {
-    res.status(200).json({msg:'Alteração do usuário'})
-}
+    let sql = 'UPDATE "cfgUsuario" SET "dsUsuario" =$1,"dsLogon"=$2 , "dsSenha"=$3 WHERE "cdUsuario" =$4 RETURNING *'
+    let val =[
+        req.body.dsUsuario,
+        req.body.dsLogon,
+        req.body.dsSenha,
+        req.query.cdUsuario
+    ]
+    db.client.query(sql,val, function (erro, resultado) {
+        if(erro){
+            res.status(401).json(erro)
+            return
+        }
+        res.status(200).json({msg:'Alteração do Usuario', dados: resultado.rows[0]})
+    })
+}    
 
 function cancelarUsuario(req, res) {
-    res.status(200).json({msg:'Cancelar usuário'})
+    let sql = 'UPDATE "cfgUsuario" SET "cdCancelado" = $1, "dtCancelado" = NOW() WHERE "cdUsuario" = $2'
+    let valor=[
+        req.query.cdUsuario,
+        req.query.idUser
+    ]
+    db.client.query(sql,valor, function (erro, resultado) {
+        if(erro){
+            res.status(401).json(erro)
+            return
+        }
+        res.status(200).json({msg:'Usuario ' + req.query.cdUsuario + ' Cancelado com Sucesso'})
+    })
 }
 module.exports = {
     consultaUsuario,

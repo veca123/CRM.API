@@ -38,10 +38,30 @@ function cadastro(req, res) {
 }
 
 function alteracao(req, res) {
-    res.status(200).json({msg:'Alteração de cliente'})
+    let sql = 'UPDATE "cadCliente" SET "cdArea"= $1, "cdRamoAtividade"= $2, "rfCnpjCpf"=$3, "idSituacao"=$4, "rfInscricaoEstadualRg"=$5, "dsNomeFantasia"= $6, "dsRazaoSocial"=$7,"idTipo" =$8 ,"cdUsuario" =$9, "txObservacao" = $10 WHERE "cdCliente" = $11 RETURNING *'
+    	let val = [
+        req.body.cdArea,
+        req.body.cdRamoAtividade,
+        req.body.rfCnpjCpf,
+        req.body.idSituacao,
+        req.body.rfInscricaoEstadualRg,
+        req.body.dsNomeFantasia,
+        req.body.dsRazaoSocial,
+        req.body.idTipo,
+        req.body.cdUsuario,
+        req.body.txObservacao,
+        req.query.cdCliente
+    ]
+    db.client.query(sql,val, function (erro, resultado) {
+        if(erro){
+            res.status(401).json(erro)
+            return
+        }
+        res.status(200).json({msg:'Alteração de cliente', dados: resultado.rows[0]})
+    })
 }
 
-function cancelar(req, res) { // esta dando undefined
+function cancelar(req, res) {
     let sql = 'UPDATE "cadCliente" SET "cdCancelado" = $1, "dtCancelado" = NOW() WHERE "cdCliente" = $2'
     let val=[
         req.query.cdUsuario,
