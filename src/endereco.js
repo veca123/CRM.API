@@ -35,6 +35,7 @@ function cadastroEndereco(req, res) {
 }
 
 function alteracaoEndereco(req, res) {
+<<<<<<< HEAD
     let sql = 'UPDATE "cadClienteEndereco" SET "cdCliente"= $1, "rfCep"= $2, "dsEndereco"=$3, "dsBairro"=$4, "rfNumero"=$5, "cdCidade"= $6, "dsReferencia"=$7,"idTipo"=$8 WHERE "cdClienteEndereco" = $9 RETURNING *'
     let val = [
         req.body.cdCliente,
@@ -54,6 +55,9 @@ function alteracaoEndereco(req, res) {
         }
         res.status(200).json({msg:'Alteração do endereço', dados: resultado.rows[0]})
     })
+=======
+    res.status(200).json({msg:'Alteração do endereço'})
+>>>>>>> 8b5246179d8ecd8dbbdec000b9f203871e321e90
 }
 
 function cancelarEndereco(req, res) {
